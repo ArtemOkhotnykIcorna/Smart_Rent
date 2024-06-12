@@ -10,7 +10,7 @@ const rent = require("./src/routers/rent")
 const user = require("./src/routers/user")
 
 
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 3000;
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
