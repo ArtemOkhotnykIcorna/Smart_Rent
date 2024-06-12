@@ -5,12 +5,14 @@ const db = require('./db');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
 const app = express();
 const rent = require("./src/routers/rent")
 const user = require("./src/routers/user")
+const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
-
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 4001;
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
@@ -21,6 +23,10 @@ app.use(function (req, res, next) {
     );
     next();
 });
+app.use(logger(formatsLogger));
+app.use(cors({ origin: true, credentials: true }));
+app.use(express.json());
+app.use(express.static('Images'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));

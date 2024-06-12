@@ -2,7 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const AWS = require('aws-sdk');
 const path = require('path');
-const { House } = require('../../models/house');
+const House  = require('../../models/house');
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -44,13 +44,13 @@ function uploadPhoto(buffer, fileName, callback) {
 const createHouse = async (req, res) => {
     try {
         const { address, realtor, realtorPhone, prise, prise_currency, description, photo, longitude, latitude } = req.body;
+
         if (!address || !realtor || !realtorPhone || !prise || !prise_currency || !description || !photo) {
             return res.status(400).json({ message: "All fields are required in the request body" });
         }
 
-        // Завантаження фотографії
-        const photoBuffer = Buffer.from(photo, 'base64'); // Припускаючи, що фото приходить у вигляді base64-стрічки
-        const fileName = `${Date.now()}-${address}.jpg`; // Унікальне ім'я файлу
+        const photoBuffer = Buffer.from(photo, 'base64');
+        const fileName = `${Date.now()}-${address}.jpg`;
 
         uploadPhoto(photoBuffer, fileName, async (error, signedUrl) => {
             if (error) {
@@ -64,7 +64,7 @@ const createHouse = async (req, res) => {
                 prise: prise,
                 prise_currency: prise_currency,
                 description: description,
-                photo: signedUrl, // Зберігаємо підписаний URL у полі `photo`
+                photo: signedUrl,
                 longitude: longitude,
                 latitude: latitude
             });
