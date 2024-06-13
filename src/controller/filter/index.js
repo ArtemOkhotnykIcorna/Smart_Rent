@@ -25,12 +25,15 @@ const getHomeByObl = async (req, res) => {
     try {
         const { obl } = req.params;
         const { limit = 200, offset = 0 } = req.query;
+        const count = await House.countDocuments({ obl: obl });
 
         const houses = await House.find({ obl: obl })
             .skip(Number(offset))
             .limit(Number(limit));
 
-        res.status(200).json(houses);
+
+        resul = {houses, count}
+        res.status(200).json(resul);
     } catch (error) {
         console.error('Error occurred:', error.message);
         res.status(500).json({ error: 'Server error' });
@@ -42,11 +45,12 @@ const getHomeByCity = async (req, res) => {
         const { city } = req.params;
         const { limit = 200, offset = 0 } = req.query;
 
+        const count = await House.countDocuments({ city: city });
         const houses = await House.find({ city: city })
             .skip(Number(offset))
             .limit(Number(limit));
-
-        res.status(200).json(houses);
+        resul = {houses, count}
+        res.status(200).json(resul);
     } catch (error) {
         console.error('Error occurred:', error.message);
         res.status(500).json({ error: 'Server error' });
