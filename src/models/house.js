@@ -96,7 +96,10 @@ const House = new mongoose.Schema({
     },
     animals: {
         type: Boolean
-    }
+    },
+    obl: {
+        type: String
+    },
 
 });
 

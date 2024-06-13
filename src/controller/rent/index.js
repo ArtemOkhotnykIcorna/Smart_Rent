@@ -43,9 +43,9 @@ function uploadPhoto(buffer, fileName, callback) {
 
 const createHouse = async (req, res) => {
     try {
-        const { address, realtor, realtorPhone, prise, prise_currency, description, photo, longitude, latitude, district, house_type, balcony, area, floor, walls_type, heating, rooms, children, animals, city} = req.body;
+        const { address, realtor, realtorPhone, prise, prise_currency, description, photo, longitude, latitude, district, house_type, balcony, area, floor, walls_type, heating, rooms, children, animals, city, obl} = req.body;
 
-        if (!address || !realtor || !realtorPhone || !prise || !prise_currency || !description || !photo || !longitude || !latitude || !district || !house_type || ! balcony || ! area || ! floor || ! walls_type || ! heating || ! rooms || ! children || ! animals || ! city) {
+        if (!address || !realtor || !realtorPhone || !prise || !prise_currency || !description || !photo || !longitude || !latitude || !district || !house_type || ! balcony || ! area || ! floor || ! walls_type || ! heating || ! rooms || ! children || ! animals || ! city || !obl) {
             return res.status(400).json({ message: "All fields are required in the request body" });
         }
 
@@ -77,7 +77,8 @@ const createHouse = async (req, res) => {
                 rooms: rooms,
                 children: children,
                 animals: animals,
-                city: city
+                city: city,
+                obl: obl
             });
 
             await house.save();

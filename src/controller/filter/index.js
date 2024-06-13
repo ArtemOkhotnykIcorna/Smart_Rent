@@ -17,11 +17,11 @@ const getHomeByPrise = async (req, res) => {
     }
 };
 
-const getHomeByCity = async (req, res) => {
+const getHomeByObl = async (req, res) => {
     try{
-        const { city } = req.params
+        const { obl } = req.params
 
-        const house = await House.findOne({city: city})
+        const house = await House.findOne({obl: obl})
         res.status(200).json(house)
     }
     catch (error) {
@@ -33,5 +33,5 @@ const getHomeByCity = async (req, res) => {
 
 module.exports = {
     getHomeByPrise,
-    getHomeByCity
+    getHomeByObl
 };
