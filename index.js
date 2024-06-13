@@ -10,9 +10,12 @@ const cors = require('cors');
 const app = express();
 const rent = require("./src/routers/rent")
 const user = require("./src/routers/user")
+const filter = require("./src/routers/filter")
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
-const PORT = process.env.PORT || 4001;
+
+
+const PORT = process.env.PORT || 4002;
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
@@ -33,6 +36,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 app.use(rent);
 app.use(user);
+app.use(filter);
 
 app.get('/', (req, res) => {
     res.send('Telegram bot is running!');
