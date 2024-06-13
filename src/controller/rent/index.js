@@ -64,7 +64,7 @@ const createHouse = async (req, res) => {
                 prise: prise,
                 prise_currency: prise_currency,
                 description: description,
-                photo: signedUrl,
+                photo: "signedUrl",
                 longitude: longitude,
                 latitude: latitude,
                 district: district,
@@ -91,8 +91,13 @@ const createHouse = async (req, res) => {
 };
 
 const getAllHouse = async (req, res) => {
-    let hous = await House.find();
-    return res.status(200).json({ success: true, hous });
+    try {
+        let hous = await House.find();
+        return res.status(200).json({ success: true, hous });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 }
 
 const findHouseById = async (req, res) => {
