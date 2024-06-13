@@ -1,4 +1,3 @@
-// controllers/filterHouse.js
 const House  = require('../../models/house');
 
 const getHomeByPrise = async (req, res) => {
@@ -18,6 +17,21 @@ const getHomeByPrise = async (req, res) => {
     }
 };
 
+const getHomeByCity = async (req, res) => {
+    try{
+        const { city } = req.params
+
+        const house = await House.findOne({city: city})
+        res.status(200).json(house)
+    }
+    catch (error) {
+        console.error('Error occurred:', error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+
+}
+
 module.exports = {
-    getHomeByPrise
+    getHomeByPrise,
+    getHomeByCity
 };
