@@ -1,0 +1,8 @@
+TELEGRAM_BOT_TOKEN=7457513363:AAEUMUkCkNz2lrtV8B9lltPXEN5M48KvAIo
+MONGODB_URI=mongodb+srv://User:user@atlascluster.58cjz0i.mongodb.net/
+MINI_APP_URL=https://666c4881a47bf9a8d25ef290--snazzy-toffee-714c68.netlify.app/
+JWT_SECRET=324vdfkmnvierufw9834fjdiserjcd
+AWS_ACCESS_KEY_ID=AKIA3FLDW6SA2K24COH3
+AWS_SECRET_ACCESS_KEY=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
+S3_BUCKET_NAME=smartrent
+AWS_REGION=eu-north-1
