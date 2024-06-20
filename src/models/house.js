@@ -23,17 +23,14 @@
 const mongoose = require('mongoose');
 
 const House = new mongoose.Schema({
-    address: {
-        type: String,
-        required: true,
+    address: { //;
+        type: Object,
     },
-    realtor: {
+    realtor: { //;
         type: String,
-        required: true
     },
-    realtorPhone: {
+    realtorPhone: { //;
         type: String ,
-        required: true
     },
     prise: {
         type: Number
@@ -43,28 +40,24 @@ const House = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true
     },
     photo: {
         type: Array,
-        required: true
     },
-    latitude: {
+    latitude: { //;
         type: Number
     },
-    longitude: {
+    longitude: { //;
         type: Number
     },
 
 
-    city: {
+    city: { //y
         type: String,
-        required: true,
     },
-    //Район
+    //Район є
     district: { //District House_type Balcony Area Floor Walls_type Heating Rooms Children Animals
         type: String,
-        required: true,
     },
     house_type: {
         type: String,
@@ -100,6 +93,11 @@ const House = new mongoose.Schema({
     obl: {
         type: String
     },
+
+    statusHome: {
+        type: String,
+        enum: ["create", "public"],
+    }
 
 });
 

@@ -1,1 +1,118 @@
-gdbdfgb
+require('dotenv').config(); // Підключаємо dotenv
+const { Telegraf, Markup, session } = require('telegraf');
+const jwt = require('jsonwebtoken');
+const { saveUser, saveLocation } = require('../../db');
+const axios = require('axios');
+const createHouse = require("../controller/rent/index");
+const NodeGeocoder = require('node-geocoder');
+
+const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
+
+// Використання сесійного middleware
+bot.use(session());
+
+// Конфігурація геокодера
+const geocoderOptions = {
+    provider: 'openstreetmap'
+};
+const geocoder = NodeGeocoder(geocoderOptions);
+
+// Стартовий хендлер
+bot.start((ctx) => {
+    ctx.reply('Please, authorize by providing your phone number:',
+        Markup.keyboard([
+            Markup.button.contactRequest('Share Contact')
+        ]).resize().oneTime()
+    );
+});
+
+// Хендлер для обробки контакту
+bot.on('contact', async (ctx) => {
+    const { phone_number, first_name, last_name } = ctx.message.contact;
+    const chatId = ctx.message.chat.id;
+    const username = `${first_name} ${last_name}`.trim();
+
+    try {
+        const token = await saveUser({
+            chatId: chatId,
+            phoneNumber: phone_number,
+            userName: username
+        });
+
+        ctx.session = {}
+        ctx.session.realtor = username;
+        ctx.session.realtorPhone = phone_number;
+
+        ctx.reply('Authorization successful! Now, please share your location:',
+            Markup.keyboard([
+                Markup.button.locationRequest('Share Location')
+            ]).resize().oneTime()
+        );
+    } catch (error) {
+        console.error('Error saving user:', error);
+        ctx.reply('Error. Please try again.');
+    }
+});
+
+// Хендлер для обробки місцезнаходження
+bot.on('location', async (ctx) => {
+    const { latitude, longitude } = ctx.message.location;
+    const chatId = ctx.message.chat.id;
+
+    try {
+        const token = jwt.sign({ chatId }, process.env.JWT_SECRET);
+        await saveLocation(chatId, latitude, longitude, token);
+
+        ctx.reply('Location received successfully! You can now create a rental ad or open the Rent App:',
+            Markup.removeKeyboard()
+        ).then(() => {
+            ctx.reply('Choose an option:',
+                Markup.keyboard([
+                    [{ text: 'Create Ad' }],
+                    [{ text: 'Rent App', web_app: { url: `${process.env.MINI_APP_URL}?token=${token}` } }]
+                ]).resize().oneTime()
+            );
+        });
+    } catch (error) {
+        console.error('Error processing location:', error);
+        ctx.reply('Error processing location. Please try again.');
+    }
+});
+
+// Хендлер для обробки текстових повідомлень
+bot.on('text', async (ctx) => {
+    try {
+        const messageText = ctx.message.text;
+
+        if (messageText === 'Create Ad') {
+            await ctx.reply('Please enter the address in the format: street, house number, city');
+        } else {
+            const url = `https://nominatim.openstreetmap.org/search?addressdetails=1&q=${encodeURIComponent(messageText)}&format=json`;
+            const response = await axios.get(url);
+            const res = response.data;
+
+            if (res.length > 0) {
+                const { lat, lon, address } = res[0];
+                const { city, state, district } = address;
+
+                ctx.session.address = messageText;
+                ctx.session.latitude = lat;
+                ctx.session.longitude = lon;
+                ctx.session.city = city;
+                ctx.session.state = state;
+                ctx.session.district = district;
+
+                createHouse.createHouseBot(ctx.session);
+                console.log(ctx.session)
+            } else {
+                await ctx.reply(`Address '${messageText}' not found.`);
+            }
+        }
+    } catch (error) {
+        console.error('Error processing message:', error.message);
+        await ctx.reply('An error occurred while processing your request.');
+    }
+});
+
+bot.launch();
+

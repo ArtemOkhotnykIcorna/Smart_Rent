@@ -13,39 +13,37 @@ const s3 = new AWS.S3({
 
 const bucketName = process.env.S3_BUCKET_NAME;
 
-function uploadPhoto(buffer, fileName, callback) {
+
+// Функція для завантаження фото в S3
+async function uploadPhoto(buffer, fileName) {
     const params = {
-        Bucket: bucketName,
+        Bucket: process.env.S3_BUCKET_NAME,
         Key: fileName,
         Body: buffer,
         ContentType: 'image/jpeg' // Або інший MIME тип відповідно до типу вашого файлу
     };
 
-    s3.putObject(params, function(error, data) {
-        if (error) {
-            console.error('Upload Error:', error);
-            callback(error, null);
-        } else {
-            console.log('Successfully uploaded photo ' + fileName + ' to bucket ' + bucketName);
+    const data = await s3.upload(params).promise();
+    console.log('Successfully uploaded photo ' + fileName + ' to bucket ' + process.env.S3_BUCKET_NAME);
 
-            // Отримання підписаного URL
-            const urlParams = {
-                Bucket: bucketName,
-                Key: fileName,
-                Expires: 60 * 60 // 1 година
-            };
-            const signedUrl = s3.getSignedUrl('getObject', urlParams);
-            console.log('Signed URL: ', signedUrl);
-            callback(null, signedUrl);
-        }
-    });
+    // Отримання підписаного URL
+    const urlParams = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: fileName,
+        Expires: 60 * 60 // 1 година
+    };
+    const signedUrl = s3.getSignedUrl('getObject', urlParams);
+    console.log('Signed URL: ', signedUrl);
+
+    return signedUrl;
 }
+
 
 const createHouse = async (req, res) => {
     try {
-        const { address, realtor, realtorPhone, prise, prise_currency, description, photo, longitude, latitude, district, house_type, balcony, area, floor, walls_type, heating, rooms, children, animals, city, obl} = req.body;
+        const { address, realtor, realtorPhone, prise, prise_currency, description, photo, district, house_type, balcony, area, floor, walls_type, heating, rooms, children, animals, city, obl} = req.body;
 
-        if (!address || !realtor || !realtorPhone || !prise || !prise_currency || !description || !photo || !longitude || !latitude || !district || !house_type || ! balcony || ! area || ! floor || ! walls_type || ! heating || ! rooms || ! children || ! animals || ! city || !obl) {
+        if (!address || !realtor || !realtorPhone || !prise || !prise_currency || !description || !photo || !district || !house_type || ! balcony || ! area || ! floor || ! walls_type || ! heating || ! rooms || ! children || ! animals || ! city || !obl) {
             return res.status(400).json({ message: "All fields are required in the request body" });
         }
 
@@ -64,7 +62,7 @@ const createHouse = async (req, res) => {
                 prise: prise,
                 prise_currency: prise_currency,
                 description: description,
-                photo: "signedUrl",
+                photo: photo,
                 longitude: longitude,
                 latitude: latitude,
                 district: district,
@@ -78,7 +76,8 @@ const createHouse = async (req, res) => {
                 children: children,
                 animals: animals,
                 city: city,
-                obl: obl
+                obl: obl,
+                statusHome: "create"
             });
 
             await house.save();
@@ -108,8 +107,53 @@ const findHouseById = async (req, res) => {
 }
 
 
+
+const createHouseBot = async (houseData) => {
+    try {
+        // const photoBuffer = Buffer.from(photoBase64, 'base64');
+        // const fileName = `${Date.now()}-${houseData.address}.jpg`;
+        // const photoUrl = await uploadPhoto(photoBuffer, fileName);
+
+        const house = new House({
+            address: houseData.address, //готово
+            realtor: houseData.realtor,//готово
+            realtorPhone: houseData.realtorPhone,//готово
+            prise: houseData.prise,//готово
+            prise_currency: "UAH",//готово
+            description: houseData.description, //готово
+            photo: houseData.photoUrl,
+            longitude: houseData.longitude, //готово
+            latitude: houseData.latitude,//готово
+            district: houseData.district,//готово
+            house_type: houseData.house_type,//готово
+            balcony: houseData.balcony,//готово
+            area: houseData.area,//готово
+            floor: houseData.floor,//готово
+            walls_type: houseData.walls_type,//готово
+            heating: houseData.heating,//готово
+            rooms: houseData.rooms,//готово
+            children: houseData.children,//готово
+            animals: houseData.animals,//готово
+            city: houseData.city,//готово
+            obl: houseData.obl,//готово
+            statusHome: "create"//готово
+        });
+
+        await house.save();
+        console.log("Created new house");
+
+        return true;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+};
+
+
 module.exports = {
     createHouse,
     getAllHouse,
-    findHouseById
+    findHouseById,
+    createHouseBot,
+    uploadPhoto
 };
