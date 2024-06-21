@@ -14,7 +14,7 @@ const filter = require("./src/routers/filter")
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 
-const PORT = process.env.PORT || 4006;
+const PORT = process.env.PORT || 4010;
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
