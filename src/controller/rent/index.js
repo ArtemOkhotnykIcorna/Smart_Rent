@@ -110,10 +110,6 @@ const findHouseById = async (req, res) => {
 
 const createHouseBot = async (houseData) => {
     try {
-        // const photoBuffer = Buffer.from(photoBase64, 'base64');
-        // const fileName = `${Date.now()}-${houseData.address}.jpg`;
-        // const photoUrl = await uploadPhoto(photoBuffer, fileName);
-
         const house = new House({
             address: houseData.address, //готово
             realtor: houseData.realtor,//готово

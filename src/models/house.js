@@ -87,3 +87,4 @@ const houseSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('House', houseSchema);
+//
