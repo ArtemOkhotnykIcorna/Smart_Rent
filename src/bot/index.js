@@ -320,3 +320,4 @@ async function uploadPhoto(buffer, fileName) {
 
 // Запуск бота
 bot.launch();
+//
