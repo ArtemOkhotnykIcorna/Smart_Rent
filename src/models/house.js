@@ -1,68 +1,55 @@
-/*
-* Місто:
-Район:
-  ЖК або Тип будинку: хрущівка, дореволюційний, сталінка
-Балкон: так/ні
-Опис: !!!Доступний в карточці квартири!!!
-Площа: м квадратні
-Поверх:
-Тип стін: блочні, монолітно-каркасний, панелі, утеплена панель, цегляний будинок
-Опалення: автономне, індивідуальне, централізоване
-Кімнати: (спальні, дитяча, кухня, гардеробна, санвузли, ванна) кількість
-Техніка: пральна машина, мікрохвильова піч, порохотяг, телевізор,  посудомийна машина.
-Діти:
-Тварини:
-Ціна: гривня/доллар (зробити фільтрацію від і до)
-*
-*
-* */
-
-
 // db/userModel.js
-
+// road: { type: String },
+// suburb: { type: String },
+// borough: { type: String },
+// city: { type: String },
+// municipality: { type: String },
+// district: { type: String },
+// state: { type: String },
+// ISO3166_2_lvl4: { type: String },
+// postcode: { type: String },
+// country: { type: String },
+// country_code: { type: String }
 const mongoose = require('mongoose');
-
-const House = new mongoose.Schema({
-    address: { //;
-        type: Object,
-    },
-    realtor: { //;
+const { nanoid } = require('nanoid');
+//
+const houseSchema = new mongoose.Schema({
+    address: {
         type: String,
     },
-    realtorPhone: { //;
-        type: String ,
+    realtor: {
+        type: String,
     },
-    prise: {
+    realtorPhone: {
+        type: String,
+    },
+    price: {
         type: Number
     },
-    prise_currency: {
+    price_currency: {
         type: String
     },
     description: {
         type: String,
     },
-    photo: {
+    photos: {
         type: Array,
     },
-    latitude: { //;
+    latitude: {
         type: Number
     },
-    longitude: { //;
+    longitude: {
         type: Number
     },
-
-
-    city: { //y
+    city: {
         type: String,
     },
-    //Район є
-    district: { //District House_type Balcony Area Floor Walls_type Heating Rooms Children Animals
+    district: {
         type: String,
     },
     house_type: {
         type: String,
         enum: ['RS', 'KHR', 'PR', 'STL', 'SP'],
-        //Residential complex, хрушовка, дореволюційна, Сталінка, спец. проєкт
     },
     balcony: {
         type: Boolean
@@ -79,7 +66,7 @@ const House = new mongoose.Schema({
     },
     heating: {
         type: String,
-        enum: ["autonomous", "individual", "centralized", "insulated_panel", "brick"],
+        enum: ["autonomous", "individual", "centralized"],
     },
     rooms: {
         type: Number
@@ -93,12 +80,10 @@ const House = new mongoose.Schema({
     obl: {
         type: String
     },
-
     statusHome: {
         type: String,
         enum: ["create", "public"],
     }
-
 });
 
-module.exports = mongoose.model('House', House);
+module.exports = mongoose.model('House', houseSchema);

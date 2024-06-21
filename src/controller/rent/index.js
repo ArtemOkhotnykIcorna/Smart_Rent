@@ -121,7 +121,7 @@ const createHouseBot = async (houseData) => {
             prise: houseData.prise,//готово
             prise_currency: "UAH",//готово
             description: houseData.description, //готово
-            photo: houseData.photoUrl,
+            photos: houseData.photos,
             longitude: houseData.longitude, //готово
             latitude: houseData.latitude,//готово
             district: houseData.district,//готово
