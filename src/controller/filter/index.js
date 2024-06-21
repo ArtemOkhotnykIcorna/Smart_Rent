@@ -1,4 +1,6 @@
 const House = require('../../models/house');
+const searchHouse = require('../../helpers/search')
+
 
 const getHomeByPrise = async (req, res) => {
     try {
@@ -57,8 +59,34 @@ const getHomeByCity = async (req, res) => {
     }
 };
 
+const fastSearch = async (req, res) => {
+    try {
+        const { text } = req.params;
+        const { limit = 200, offset = 0 } = req.query;
+        const regex = new RegExp(text, 'i'); // 'i' для ігнорування регістру
+
+        const results = await House.find({
+            $or: [
+                { address: { $regex: regex } },
+                { description: { $regex: regex } },
+                { city: { $regex: regex } },
+                { district: { $regex: regex } }
+            ]
+        }).skip(Number(offset)).limit(Number(limit)).exec()
+            ;
+        console.log(results)
+        res.status(200).json(results);
+    }
+    catch (error) {
+        console.error('Error occurred:', error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
+
 module.exports = {
     getHomeByPrise,
     getHomeByObl,
-    getHomeByCity
-};
+    getHomeByCity,
+    fastSearch
+}

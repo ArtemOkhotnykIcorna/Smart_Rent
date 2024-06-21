@@ -86,5 +86,13 @@ const houseSchema = new mongoose.Schema({
     }
 });
 
+
+houseSchema.index({
+    address: 'text',
+    description: 'text',
+    city: 'text',
+    district: 'text'
+});
+
 module.exports = mongoose.model('House', houseSchema);
 //
